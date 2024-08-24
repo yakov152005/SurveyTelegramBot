@@ -28,6 +28,22 @@ public class Constants {
         public static final String ERROR_8 = "Unknown action. Please try again.";
         public static final String ERROR_9 = "Error: Survey not found for this chat.";
         public static final String ERROR_10 = "Error Send Message.";
+        public static final String ERROR_11 = "Survey not found for chat ID: ";
+    }
+
+    public static class TEXT{
+        public static final String TEXT_1 = "Survey found for chat ID: ";
+        public static final String TEXT_2 = "Your answer has been recorded.";
+        public static final String TEXT_3 = "Survey Results:\n";
+        public static final String TEXT_4 = "Make a Survey";
+        public static final String TEXT_5 = "Welcome to the community!";
+        public static final String TEXT_6 = "try_create_survey";
+        public static final String TEXT_7 = "Next Question";
+        public static final String TEXT_8 = "Done";
+        public static final String TEXT_9 = "Please send the next question or choose 'done' to finish.";
+        public static final String TEXT_10 = "Immediately";
+        public static final String TEXT_11 = "Delay";
+        public static final String TEXT_12 = "Exit";
     }
 
     public static class CallBackData{

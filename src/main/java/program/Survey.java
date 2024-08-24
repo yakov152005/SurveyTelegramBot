@@ -9,13 +9,15 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Survey {
+    private long creatorChatId;
     private long creatorId;
     private List<String> questions;
     private List<List<String>> answers;
     private boolean expectingAnswers;
 
-    public Survey(long creatorId){
+    public Survey(long creatorId, long creatorChatId) {
         this.creatorId = creatorId;
+        this.creatorChatId = creatorChatId;
         this.questions = new LinkedList<>();
         this.answers = new LinkedList<>();
         this.expectingAnswers = false;
@@ -26,6 +28,10 @@ public class Survey {
             questions.add(question);
             answers.add(new LinkedList<>());
         }
+    }
+
+    public long getCreatorChatId() {
+        return creatorChatId;
     }
 
     public void addAnswers(List<String> possibleAnswers){

@@ -17,6 +17,7 @@ import static utils.Constants.CallBackData.*;
 import static utils.Constants.Details.*;
 import static utils.Constants.ERRORS.*;
 import static utils.Constants.SurveyCreation.*;
+import static utils.Constants.TEXT.*;
 import static utils.Constants.TimerClass.*;
 
 
@@ -53,7 +54,7 @@ public class MyTelegramBot extends TelegramLongPollingBot {
     private void surveyCreation(Update update, String messageText, long chatId){
         if (waitingForDecision.getOrDefault(chatId, false)) {
             surveyCreationDecision(chatId, messageText);
-        } else if (messageText.equalsIgnoreCase("Make A Survey")) {
+        } else if (messageText.equalsIgnoreCase(TEXT_4)) {
             if (communityMembers.size() < FOR_CREATE_SURVEY) {
                 sendMessage(chatId, ERROR_1);
             } else if (!activeSurveys.isEmpty()) {
@@ -61,7 +62,7 @@ public class MyTelegramBot extends TelegramLongPollingBot {
             } else {
                 startSurveyCreation(chatId);
             }
-        } else if (messageText.equalsIgnoreCase("Exit")) {
+        } else if (messageText.equalsIgnoreCase(TEXT_12)) {
             sendMessage(chatId, "You have exited the menu.");
         } else if (messageText.equalsIgnoreCase("/start") || messageText.equalsIgnoreCase("Hi") || messageText.equalsIgnoreCase("היי")) {
             addToCommunity(update);
@@ -92,7 +93,7 @@ public class MyTelegramBot extends TelegramLongPollingBot {
     private void handleSurveyInput(long chatId, String messageText) {
         Survey survey = activeSurveys.get(chatId);
 
-        if (messageText.equalsIgnoreCase("done")) {
+        if (messageText.equalsIgnoreCase(C2)) {
             finalizeSurveyCreation(chatId);
             return;
         }
@@ -106,7 +107,7 @@ public class MyTelegramBot extends TelegramLongPollingBot {
             if (answers.length >= LOW_SURVEY && answers.length <= HIGH_SURVEY) {
                 survey.addAnswers(Arrays.asList(answers));
                 survey.setExpectingAnswers(false);
-                if (survey.getQuestions().size() < MAX_QUESTIONS) {
+                if (survey.getQuestions().size() < MAX_QUESTIONS ) {
                     sendNextQuestionOrDone(chatId);
                 } else {
                     finalizeSurveyCreation(chatId);
@@ -118,8 +119,9 @@ public class MyTelegramBot extends TelegramLongPollingBot {
     }
 
     private void startSurveyCreation(long chatId) {
-        Survey survey = new Survey(chatId);
+        Survey survey = new Survey(chatId, chatId);
         activeSurveys.put(chatId, survey);
+        System.out.println("Survey created and stored for chat ID: " + chatId);
         sendMessage(chatId, "Let's start creating your survey. Please send the first question.");
     }
 
@@ -133,12 +135,12 @@ public class MyTelegramBot extends TelegramLongPollingBot {
         List<InlineKeyboardButton> rowInline = new ArrayList<>();
 
         InlineKeyboardButton immediatelyButton = new InlineKeyboardButton();
-        immediatelyButton.setText("Immediately");
-        immediatelyButton.setCallbackData("immediately");
+        immediatelyButton.setText(TEXT_10);
+        immediatelyButton.setCallbackData(C3);
 
         InlineKeyboardButton delayButton = new InlineKeyboardButton();
-        delayButton.setText("Delay");
-        delayButton.setCallbackData("delay");
+        delayButton.setText(TEXT_11);
+        delayButton.setCallbackData(C4);
 
         rowInline.add(immediatelyButton);
         rowInline.add(delayButton);
@@ -226,19 +228,20 @@ public class MyTelegramBot extends TelegramLongPollingBot {
         System.out.println("Received callback data: " + callbackData);
         System.out.println("Chat ID: " + chatId);
 
-        if (callbackData.equals("try_create_survey")) {
+        if (callbackData.equals(TEXT_6)) {
             if (communityMembers.size() < FOR_CREATE_SURVEY) {
                 sendMessage(chatId, ERROR_1);
             } else if (!activeSurveys.isEmpty()) {
                 sendMessage(chatId, ERROR_2);
             } else {
                 startSurveyCreation(chatId);
+                System.out.println("Survey created and stored for chat ID: " + chatId);
             }
-        } else if (callbackData.equals("next_question") || callbackData.equals("done") || callbackData.equals("immediately") || callbackData.equals("delay")) {
+        } else if (callbackData.equals(C1) || callbackData.equals(C2) || callbackData.equals(C3) || callbackData.equals(C4)) {
             switch (callbackData) {
                 case C1:
                     System.out.println("User chose to add next question.");
-                    sendMessage(chatId, "Please send the next question or type 'done' to finish.");
+                    sendMessage(chatId, TEXT_9);
                     break;
                 case C2:
                     System.out.println("User finished creating survey.");
@@ -246,7 +249,7 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                     break;
                 case C3:
                 case C4:
-                    System.out.println("User chose to send survey " + (callbackData.equals("immediately") ? "immediately" : "with delay") + ".");
+                    System.out.println("User chose to send survey " + (callbackData.equals(C3) ? "immediately" : "with delay") + ".");
                     surveyCreationDecision(chatId, callbackData);
                     break;
                 default:
@@ -254,34 +257,52 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                     break;
             }
         } else if (messageIdToQuestionIndexMap.containsKey(messageId)) {
+            Survey survey = activeSurveys.get(chatId);
+
+
+            if (survey == null) {
+                System.out.println(ERROR_11 + chatId);
+                for (Long memberChatId : activeSurveys.keySet()) {
+                    survey = activeSurveys.get(memberChatId);
+                    if (survey != null) {
+                        System.out.println(TEXT_1 + memberChatId + " instead.");
+                        break;
+                    }
+                }
+            }
+
+            if (survey == null) {
+                sendMessage(chatId, ERROR_9);
+                return;
+            }
+
+            System.out.println(TEXT_1 + chatId);
+
             int questionIndex = messageIdToQuestionIndexMap.get(messageId);
             surveyResponses.computeIfAbsent(chatId, k -> new HashMap<>()).put(questionIndex, callbackData);
 
-
             boolean allQuestionsAnswered = true;
-            for (Map<Integer, String> responses : surveyResponses.values()) {
-                if (responses.size() < activeSurveys.get(chatId).getQuestions().size()) {
+            for (Long memberChatId : communityMembers) {
+                Map<Integer, String> responses = surveyResponses.get(memberChatId);
+                if (responses == null || responses.size() < survey.getQuestions().size()) {
                     allQuestionsAnswered = false;
                     break;
                 }
             }
 
             if (allQuestionsAnswered) {
-                respondedUsers.add(chatId);
-            }
-
-            if (respondedUsers.size() == communityMembers.size() && allQuestionsAnswered) {
-                sendSurveyResults(activeSurveys.get(chatId).getCreatorId());
-                surveyTimer.cancel();
+                sendSurveyResults(survey.getCreatorId());
+                if (surveyTimer != null) {
+                    surveyTimer.cancel();
+                }
                 clearSurveyData();
             } else {
-                sendMessage(chatId, "Your answer has been recorded.");
+                sendMessage(chatId, TEXT_2);
             }
         } else {
             sendMessage(chatId, ERROR_8);
         }
     }
-
 
 
     private void sendSurveyResults(long chatId) {
@@ -291,13 +312,12 @@ public class MyTelegramBot extends TelegramLongPollingBot {
             return;
         }
 
-        StringBuilder resultsMessage = new StringBuilder("Survey Results:\n");
+        StringBuilder resultsMessage = new StringBuilder(TEXT_3);
 
         int totalResponses = surveyResponses.size();
 
         for (int questionIndex = 0; questionIndex < survey.getQuestions().size(); questionIndex++) {
             Map<String, Integer> answerCounts = new HashMap<>();
-
 
             for (String answer : survey.getAnswers().get(questionIndex)) {
                 answerCounts.put(answer, 0);
@@ -324,21 +344,23 @@ public class MyTelegramBot extends TelegramLongPollingBot {
         }
 
         sendMessage(chatId, resultsMessage.toString());
+
+        clearSurveyData();
     }
 
 
     private void sendWelcomeMessageWithOptions(long chatId) {
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
-        message.setText("Welcome to the community!");
+        message.setText(TEXT_5);
 
         InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
         List<InlineKeyboardButton> rowInline = new ArrayList<>();
 
         InlineKeyboardButton createSurveyButton = new InlineKeyboardButton();
-        createSurveyButton.setText("Make a Survey");
-        createSurveyButton.setCallbackData("try_create_survey");
+        createSurveyButton.setText(TEXT_4);
+        createSurveyButton.setCallbackData(TEXT_6);
 
         rowInline.add(createSurveyButton);
         rowsInline.add(rowInline);
@@ -355,8 +377,8 @@ public class MyTelegramBot extends TelegramLongPollingBot {
         List<KeyboardRow> keyboard = new ArrayList<>();
         KeyboardRow row = new KeyboardRow();
 
-        row.add("Make A Survey");
-        row.add("Exit");
+        row.add(TEXT_4);
+        row.add(TEXT_12);
 
         keyboard.add(row);
         keyboardMarkup.setKeyboard(keyboard);
@@ -374,19 +396,19 @@ public class MyTelegramBot extends TelegramLongPollingBot {
     private void sendNextQuestionOrDone(long chatId) {
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
-        message.setText("Please send the next question or choose 'done' to finish.");
+        message.setText(TEXT_9);
 
         InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
         List<InlineKeyboardButton> rowInline = new ArrayList<>();
 
         InlineKeyboardButton nextQuestionButton = new InlineKeyboardButton();
-        nextQuestionButton.setText("Next Question");
-        nextQuestionButton.setCallbackData("next_question");
+        nextQuestionButton.setText(TEXT_7);
+        nextQuestionButton.setCallbackData(C1);
 
         InlineKeyboardButton doneButton = new InlineKeyboardButton();
-        doneButton.setText("Done");
-        doneButton.setCallbackData("done");
+        doneButton.setText(TEXT_8);
+        doneButton.setCallbackData(C2);
 
         rowInline.add(nextQuestionButton);
         rowInline.add(doneButton);

@@ -5,15 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="11c3a8f7-3c23-436b-8003-28b50e1dd6ab" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/main/Main.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/program/MyTelegramBot.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/program/Survey.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/utils/Constants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/main/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/main/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/program/MyTelegramBot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/program/MyTelegramBot.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/program/Survey.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/program/Survey.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/utils/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/utils/Constants.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,7 +40,7 @@
     &quot;Application.Main.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -73,7 +69,9 @@
       <workItem from="1723546297713" duration="1007000" />
       <workItem from="1723905030811" duration="1976000" />
       <workItem from="1723972583730" duration="6927000" />
-      <workItem from="1724144855029" duration="11750000" />
+      <workItem from="1724144855029" duration="12175000" />
+      <workItem from="1724309208773" duration="149000" />
+      <workItem from="1724519909395" duration="8651000" />
     </task>
     <servers />
   </component>
