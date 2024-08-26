@@ -201,7 +201,7 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                 sendSurveyResults(survey.getCreatorId());
                 clearSurveyData();
             }
-        }, 5 * DEF1 * SECOND);
+        }, 5 * MINUTE * SECOND);
     }
 
     private void clearSurveyData() {
@@ -217,7 +217,7 @@ public class MyTelegramBot extends TelegramLongPollingBot {
             public void run() {
                 sendSurvey(survey);
             }
-        }, delayMinutes * DEF1 * SECOND);
+        }, delayMinutes * MINUTE * SECOND);
     }
 
     private void handleSurveyResponse(CallbackQuery callbackQuery) {

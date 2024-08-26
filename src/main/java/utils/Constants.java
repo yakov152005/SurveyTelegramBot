@@ -55,6 +55,6 @@ public class Constants {
 
     public static class TimerClass{
         public static final int SECOND = 1000;
-        public static final int DEF1 = 60;
+        public static final int MINUTE = 60;
     }
 }
